@@ -1,0 +1,116 @@
+{
+  "sessionId": "458789546",
+  "masterCallId": "3bef3ef1495c49e19bfd21951afcf043",
+  "audio": {
+    "format": "wav"
+  },
+  "metadata": {
+    "LinkID": {
+      "Value": "",
+      "Name": "LinkID",
+      "ElementType": 12,
+      "Size": 0
+    },
+    "CallIndex": {
+      "Value": "3bef3ef1495c49e19bfd21951afcf043",
+      "Name": "CallIndex",
+      "ElementType": 12,
+      "Size": 32
+    },
+    "Station": {
+      "Value": "IPE1",
+      "Name": "Station",
+      "ElementType": 12,
+      "Size": 4
+    },
+    "StationType": {
+      "Value": "IPE",
+      "Name": "StationType",
+      "ElementType": 12,
+      "Size": 3
+    },
+    "CallDirection": {
+      "Value": "O",
+      "Name": "CallDirection",
+      "ElementType": 12,
+      "Size": 1
+    },
+    "RemoteIPAddress": {
+      "Value": "192.168.236.128:16008",
+      "Name": "RemoteIPAddress",
+      "ElementType": 12,
+      "Size": 21
+    },
+    "Gateway": {
+      "Value": "SIP_TRUNK",
+      "Name": "Gateway",
+      "ElementType": 12,
+      "Size": 9
+    },
+    "CallerNumber": {
+      "Value": "1007",
+      "Name": "CallerNumber",
+      "ElementType": 12,
+      "Size": 4
+    },
+    "CalledNumber": {
+      "Value": "1001",
+      "Name": "CalledNumber",
+      "ElementType": 12,
+      "Size": 4
+    },
+    "DialedNumber": {
+      "Value": "1001",
+      "Name": "DialedNumber",
+      "ElementType": 12,
+      "Size": 4
+    },
+    "LocalIPAddress": {
+      "Value": "192.168.236.1:16002",
+      "Name": "LocalIPAddress",
+      "ElementType": 12,
+      "Size": 19
+    },
+    "AgentName": {
+      "Value": "Unknown",
+      "Name": "AgentName",
+      "ElementType": 12,
+      "Size": 7
+    },
+    "ConnectionCallDirection": {
+      "Value": "O",
+      "Name": "ConnectionCallDirection",
+      "ElementType": 12,
+      "Size": 1
+    },
+    "ConnectionDeviceType": {
+      "Value": "IPE",
+      "Name": "ConnectionDeviceType",
+      "ElementType": 12,
+      "Size": 3
+    },
+    "ConnectionDeviceID": {
+      "Value": "IPE1",
+      "Name": "ConnectionDeviceID",
+      "ElementType": 12,
+      "Size": 4
+    }
+  },
+  "contacts": [
+    {
+      "channel": 0,
+      "phoneNumber": "1007",
+      "type": "agent"
+    },
+    {
+      "channel": 1,
+      "phoneNumber": "1001",
+      "type": "customer"
+    }
+  ],
+  "direction": "Outbound",
+  "numberDialed": "1001",
+  "startTime": "2016-08-30T18:43:34.5565965Z",
+  "endTime": "2016-08-30T18:44:46.7165965Z",
+  "sendToTethr": true
+}
