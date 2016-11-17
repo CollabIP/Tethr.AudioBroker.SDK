@@ -52,9 +52,17 @@ namespace UploadRecordingSample
             // Here we are appending the time so we can test with the same file multiple times.
             recording.SessionId += DateTime.UtcNow.ToString("o");
 
+            // Update the call time to now, so the calls don't always have the same time.
+            var audioLength = recording.EndTime - recording.StartTime;
+            recording.StartTime = DateTime.UtcNow;
+            recording.EndTime = recording.StartTime + audioLength;
+            
+
             var result = tethrConnection.SendRecording(recording, wavStream).GetAwaiter().GetResult();
 
             Console.WriteLine("Sent recording to Tethr as {0}", result.CallId);
+            Console.WriteLine("Press enter to exit");
+            Console.ReadLine();
         }
     }
 }
