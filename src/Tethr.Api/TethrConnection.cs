@@ -8,10 +8,10 @@ namespace Tethr.Api
 {
     public interface ITethrConnection
     {
-        Task<ArchiveCallResponse> SendRecording(RecordingInfo info, Stream waveStream);
-        Task<SessionStatus> GetRecordingStatus(string sessionId);
-        Task<SessionStatuses> GetRecordingStatus(IEnumerable<string> sessionIds);
-        Task<IEnumerable<RecordingSettingSummary>> GetRecordingSettingsSummaries();
+        Task<ArchiveCallResponse> SendRecordingAsync(RecordingInfo info, Stream waveStream);
+        Task<SessionStatus> GetRecordingStatusAsync(string sessionId);
+        Task<SessionStatuses> GetRecordingStatusAsync(IEnumerable<string> sessionIds);
+        Task<IEnumerable<RecordingSettingSummary>> GetRecordingSettingsSummariesAsync();
     }
 
     public class TethrConnection : ITethrConnection
@@ -23,7 +23,7 @@ namespace Tethr.Api
             _apiConnection = apiConnection;
         }
 
-        public async Task<ArchiveCallResponse> SendRecording(RecordingInfo info, Stream waveStream)
+        public async Task<ArchiveCallResponse> SendRecordingAsync(RecordingInfo info, Stream waveStream)
         {
             var result = await
                 _apiConnection.PostMutliPartAsync<ArchiveCallResponse>("/callCapture/v1/archive", waveStream, info);
@@ -31,7 +31,7 @@ namespace Tethr.Api
             return result;
         }
 
-        public async Task<SessionStatus> GetRecordingStatus(string sessionId)
+        public async Task<SessionStatus> GetRecordingStatusAsync(string sessionId)
         {
             var result = await
                 _apiConnection.GetAsync<SessionStatus>($"/callCapture/v1/status/{sessionId}");
@@ -39,7 +39,7 @@ namespace Tethr.Api
             return result;
         }
 
-        public async Task<SessionStatuses> GetRecordingStatus(IEnumerable<string> sessionIds)
+        public async Task<SessionStatuses> GetRecordingStatusAsync(IEnumerable<string> sessionIds)
         {
             var result = await
                 _apiConnection.PostAsync<SessionStatuses>("/callCapture/v1/status", new { CallSessionIds = sessionIds });
@@ -47,7 +47,7 @@ namespace Tethr.Api
             return result;
         }
 
-        public async Task<IEnumerable<RecordingSettingSummary>> GetRecordingSettingsSummaries()
+        public async Task<IEnumerable<RecordingSettingSummary>> GetRecordingSettingsSummariesAsync()
         {
             var result = await
                 _apiConnection.GetAsync<IEnumerable<RecordingSettingSummary>>("/sources/v1/recordingSettings");

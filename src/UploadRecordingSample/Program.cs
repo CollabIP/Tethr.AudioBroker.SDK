@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using Common.Logging;
+using Common.Logging.Simple;
 using Tethr.Api;
 using Tethr.Api.Model;
 
@@ -29,6 +31,8 @@ namespace UploadRecordingSample
         private static OauthApiConnection _apiConnection;
         static void Main(string[] args)
         {
+            LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter();
+
             var apiUri = new Uri(ConfigurationManager.AppSettings["apiUri"]);
             var apiUser = ConfigurationManager.AppSettings["apiUser"];
             var apiPassword = ConfigurationManager.AppSettings["apiPassword"];
@@ -36,7 +40,7 @@ namespace UploadRecordingSample
             // The OauthApiConnection object should be reused on subsequent sends so that
             // the oauth bearer token can be reused and refreshed only when it expires
             _apiConnection = new OauthApiConnection();
-            _apiConnection.Initialize(apiUri, apiUser, apiPassword, null);
+            _apiConnection.Initialize(apiUri, apiUser, apiPassword);
             var tethrConnection = new TethrConnection(_apiConnection);
 
             var fileName = args.Length < 2 ? "SampleRecording.json" : args[1] ?? "";
@@ -58,7 +62,7 @@ namespace UploadRecordingSample
             recording.EndTime = recording.StartTime + audioLength;
             
 
-            var result = tethrConnection.SendRecording(recording, wavStream).GetAwaiter().GetResult();
+            var result = tethrConnection.SendRecordingAsync(recording, wavStream).GetAwaiter().GetResult();
 
             Console.WriteLine("Sent recording to Tethr as {0}", result.CallId);
             Console.WriteLine("Press enter to exit");

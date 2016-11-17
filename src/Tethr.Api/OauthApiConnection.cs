@@ -9,12 +9,13 @@ using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Logging;
 
 namespace Tethr.Api
 {
     public interface IOauthApiConnection
     {
-        void Initialize(Uri hostUri, string apiUser, string apiPassword, string webProxy);
+        void Initialize(Uri hostUri, string apiUser, string apiPassword);
         Task<T> GetAsync<T>(string requestUri);
         Task<TOut> PostMutliPartAsync<TOut>(string requestUri, Stream audioStream, object info) where TOut : new();
         Task<TOut> PostAsync<TOut>(string requestUri, object content);
@@ -23,26 +24,31 @@ namespace Tethr.Api
 
     public class OauthApiConnection : IOauthApiConnection
     {
+        private static ILog Log = LogManager.GetLogger(typeof(OauthApiConnection));
         private TokenResponse _apiToken;
         private readonly object _authLock = new object();
         private Uri _hostUri;
         private string _apiUser;
         private string _apiPassword;
 
-        public void Initialize(Uri hostUri, string apiUser, string apiPassword, string webProxy)
+        public void Initialize(Uri hostUri, string apiUser, string apiPassword)
         {
             _hostUri = hostUri;
             _apiUser = apiUser;
             _apiPassword = apiPassword;
+        }
 
-            if (string.IsNullOrEmpty(webProxy)) return;
-
-            var proxy = new WebProxy(webProxy);
-            WebRequest.DefaultWebProxy = proxy;
+        private void LogConnection(Uri hostUri, string request)
+        {
+            var uri = new Uri(hostUri, request);
+            var proxy = WebRequest.DefaultWebProxy;
+            var connectThrough = proxy.GetProxy(uri);
+            Log.Debug($"Making a request to {uri} through {connectThrough}");
         }
 
         public async Task<T> GetAsync<T>(string requestUri)
         {
+            LogConnection(_hostUri, requestUri);
             using (var client = new HttpClient { BaseAddress = _hostUri })
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetApiAuthTokenAsync());
@@ -69,6 +75,7 @@ namespace Tethr.Api
 
         public async Task<TOut> PostMutliPartAsync<TOut>(string requestUri, Stream binaryStream, object info) where TOut : new()
         {
+            LogConnection(_hostUri, requestUri);
             using (var content = new MultipartFormDataContent(Guid.NewGuid().ToString()))
             {
                 var infoContent = new StringContent(JsonConvert.SerializeObject(info), Encoding.UTF8, "application/json");
@@ -103,6 +110,7 @@ namespace Tethr.Api
 
         public async Task<TOut> PostAsync<TOut>(string requestUri, object content)
         {
+            LogConnection(_hostUri, requestUri);
             using (var client = new HttpClient { BaseAddress = _hostUri })
             {
                 using (HttpContent r = new StringContent(
@@ -130,6 +138,7 @@ namespace Tethr.Api
 
         public async Task PostAsync(string requestUri, object content)
         {
+            LogConnection(_hostUri, requestUri);
             using (var client = new HttpClient { BaseAddress = _hostUri })
             {
                 using (HttpContent r = new StringContent(
@@ -156,7 +165,7 @@ namespace Tethr.Api
                 {
                     if (force || _apiToken?.IsValid != true)
                     {
-                        Console.WriteLine("Getting Token from " + _hostUri.ToString());
+                        Log.Debug("A new token needs to be requested from " + _hostUri);
                         var t = GetClientCredentialsAsync(_hostUri, _apiUser, _apiPassword).GetAwaiter().GetResult();
                         _apiToken = t;
                     }
@@ -172,6 +181,7 @@ namespace Tethr.Api
             {
                 using (var client = new HttpClient())
                 {
+                    LogConnection(hostUri, "/Token");
                     using (HttpContent r = new FormUrlEncodedContent(
                         new Dictionary<string, string>
                         {
@@ -182,8 +192,11 @@ namespace Tethr.Api
 
                     using (var response = await client.PostAsync(new Uri(hostUri, "/Token"), r))
                     {
+                        Log.Debug($"Token response status: {response.StatusCode}");
                         response.EnsureSuccessStatusCode();
                         var t = JsonConvert.DeserializeObject<TokenResponse>(await response.Content.ReadAsStringAsync());
+
+                        Log.Debug($"Token received, type: {t.TokenType}, expires in {t.ExpiresInSeconds} seconds");
                         if (t.TokenType != "bearer")
                         {
                             throw new InvalidOperationException("Can only support Bearer tokens");
@@ -196,6 +209,7 @@ namespace Tethr.Api
             }
             catch (Exception ex)
             {
+                Log.Error($"Exception getting token: {ex}");
                 throw new AuthenticationException($"Unable to get Token for {clientId} from {hostUri.Host}, {ex.Message}", ex);
             }
         }
