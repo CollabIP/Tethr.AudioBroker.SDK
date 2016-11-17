@@ -37,6 +37,7 @@ namespace UploadRecordingSample
             // the oauth bearer token can be reused and refreshed only when it expires
             _apiConnection = new OauthApiConnection();
             _apiConnection.Initialize(apiUri, apiUser, apiPassword, null);
+            var tethrConnection = new TethrConnection(_apiConnection);
 
             var fileName = args.Length < 2 ? "SampleRecording.json" : args[1] ?? "";
 
@@ -51,11 +52,9 @@ namespace UploadRecordingSample
             // Here we are appending the time so we can test with the same file multiple times.
             recording.SessionId += DateTime.UtcNow.ToString("o");
 
-            var result =
-                _apiConnection.PostMutliPartAsync<ArchiveCallResponse>("/callCapture/v1/archive", wavStream,
-                    recording).GetAwaiter().GetResult();
+            var result = tethrConnection.SendRecording(recording, wavStream);
 
-            Console.WriteLine("Sent recording to Tethr as {0}", result.CallId);
+            Console.WriteLine("Sent recording to Tethr as {0}", result.Result.CallId);
         }
     }
 }
