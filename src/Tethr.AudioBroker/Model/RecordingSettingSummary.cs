@@ -1,4 +1,4 @@
-﻿namespace Tethr.Api.Model
+﻿namespace Tethr.AudioBroker.Model
 {
     public class RecordingSettingSummary
     {

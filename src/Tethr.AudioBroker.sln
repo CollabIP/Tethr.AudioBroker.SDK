@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UploadRecordingSample", "UploadRecordingSample\UploadRecordingSample.csproj", "{E060ECA3-27D1-4BFF-8187-3B75547896C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tethr.UploadRecordingSample", "Tethr.UploadRecordingSample\Tethr.UploadRecordingSample.csproj", "{E060ECA3-27D1-4BFF-8187-3B75547896C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tethr.Api", "Tethr.Api\Tethr.Api.csproj", "{5BBF10C6-567A-4DB4-A106-89D994FC7FC6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tethr.AudioBroker", "Tethr.AudioBroker\Tethr.AudioBroker.csproj", "{5BBF10C6-567A-4DB4-A106-89D994FC7FC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

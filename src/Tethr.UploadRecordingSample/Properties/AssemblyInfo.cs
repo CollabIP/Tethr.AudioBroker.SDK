@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Tethr.Api")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Tethr Upload Recording Sample")]
+[assembly: AssemblyDescription("Sample application that will upload an exiting recording of a call")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Tethr.Api")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCompany("CollabIP, inc.")]
+[assembly: AssemblyProduct("Tethr")]
+[assembly: AssemblyCopyright("Copyright © CollabIP, inc. 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5bbf10c6-567a-4db4-a106-89d994fc7fc6")]
+[assembly: Guid("e060eca3-27d1-4bff-8187-3b75547896c5")]
 
 // Version information for an assembly consists of the following four values:
 //

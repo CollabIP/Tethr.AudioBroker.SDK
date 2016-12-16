@@ -1,17 +1,18 @@
-﻿using System.Reflection;
+﻿using System.Resources;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("UploadRecording")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Tethr™ Audio Broker SDK")]
+[assembly: AssemblyDescription("SDK for sending audio and metadata for a call to Tethr.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("UploadRecording")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("CollabIP, inc.")]
+[assembly: AssemblyProduct("Tethr™")]
+[assembly: AssemblyCopyright("Copyright © CollabIP, inc. 2016")]
+[assembly: AssemblyTrademark("Tethr is a trademark of CollabIP, inc. CollabIP is a trademark of CollabIP, inc.")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -20,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e060eca3-27d1-4bff-8187-3b75547896c5")]
+[assembly: Guid("5bbf10c6-567a-4db4-a106-89d994fc7fc6")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,3 +35,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: NeutralResourcesLanguage("en")]
+

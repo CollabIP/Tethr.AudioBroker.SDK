@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Tethr.Api.Model
+namespace Tethr.AudioBroker.Model
 {
     public enum CallStatus
     {
@@ -26,6 +26,7 @@ namespace Tethr.Api.Model
 
         Error
     }
+     
     public class SessionStatuses
     {
         public IEnumerable<SessionStatus> CallSessions { get; set; }

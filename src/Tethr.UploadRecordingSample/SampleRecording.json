@@ -1,0 +1,39 @@
+{
+  "sessionId": "458789546",
+  "masterCallId": "3bef3ef1495c49e19bfd21951afcf043",
+  "metadata": {
+    "CallIndex": "3bef3ef1495c49e19bfd21951afcf043",
+    "Station": "IPE1",
+    "StationType": "IPE",
+
+    "RemoteIPAddress": "192.168.236.128:16008",
+    "LocalIPAddress": "192.168.236.1:16002",
+
+    "CallerNumber": "1007",
+    "CalledNumber": "1001",
+    "DialedNumber": "1001",
+
+    "AgentFirstName": "John",
+    "AgentLastName": "Dow",
+    "AgentId": "jd-123",
+    "Location": "MidWest-ContactCenter",
+    "Skill": "Widget",
+    "Department": "Sales"
+  },
+  "contacts": [
+    {
+      "channel": 0,
+      "phoneNumber": "1007",
+      "type": "agent"
+    },
+    {
+      "channel": 1,
+      "phoneNumber": "1001",
+      "type": "customer"
+    }
+  ],
+  "direction": "Outbound",
+  "numberDialed": "1001",
+  "startTime": "2016-08-30T18:43:34.5565965Z",
+  "endTime": "2016-08-30T18:44:32.62859Z"
+}

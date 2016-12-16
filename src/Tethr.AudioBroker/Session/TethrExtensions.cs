@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using Newtonsoft.Json;
 
-namespace Tethr.Api
+namespace Tethr.AudioBroker.Session
 {
-    public static class Extensions
+    public static class TethrExtensions
     {
         public static T JsonDeserialize<T>(this Stream stream)
         {
@@ -38,6 +36,5 @@ namespace Tethr.Api
                 batch.Clear();
             }
         }
-
     }
 }

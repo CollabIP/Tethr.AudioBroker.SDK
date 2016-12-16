@@ -7,8 +7,8 @@
     <ProjectGuid>{E060ECA3-27D1-4BFF-8187-3B75547896C5}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UploadRecordingSample</RootNamespace>
-    <AssemblyName>UploadRecordingSample</AssemblyName>
+    <RootNamespace>Tethr.UploadRecordingSample</RootNamespace>
+    <AssemblyName>Tethr.UploadRecordingSample</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -72,9 +72,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Tethr.Api\Tethr.Api.csproj">
+    <ProjectReference Include="..\Tethr.AudioBroker\Tethr.AudioBroker.csproj">
       <Project>{5bbf10c6-567a-4db4-a106-89d994fc7fc6}</Project>
-      <Name>Tethr.Api</Name>
+      <Name>Tethr.AudioBroker</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
