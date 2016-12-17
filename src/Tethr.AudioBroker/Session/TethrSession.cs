@@ -46,6 +46,21 @@ namespace Tethr.AudioBroker.Session
             _apiPassword = ToSecureString(connectionString.Password);
         }
 
+        /// <summary>
+        /// When True, if Tethr returns a 401 (Unauthorized), 
+        /// automatically reset the OAuth Token and request a new one with the next request
+        /// </summary>
+        /// <remarks>
+        /// Default value is True.
+        /// 
+        /// Typically the only cause for a 401 is if the Token has been revoked.
+        /// By having this true, it would allow a client to retry the request and probably
+        /// be successful.
+        /// 
+        /// If you want more control over how the reset is handled, you can set this to false.
+        /// </remarks>
+        public bool ResetAuthTokenOnUnauthorized { get; set; } = true;
+
         public void ClearAuthToken()
         {
             lock (_authLock)
@@ -180,12 +195,16 @@ namespace Tethr.AudioBroker.Session
             return _apiToken.AccessToken;
         }
 
-        private static void EnsureAuthorizedStatusCode(HttpResponseMessage message)
+        private void EnsureAuthorizedStatusCode(HttpResponseMessage message)
         {
             switch (message.StatusCode)
             {
                 case HttpStatusCode.Unauthorized:
-                    throw new AuthenticationException("Request returned 401 (Unauthorized)");
+                    {
+                        if (ResetAuthTokenOnUnauthorized)
+                            _apiToken = null;
+                        throw new AuthenticationException("Request returned 401 (Unauthorized)");
+                    }
                 case HttpStatusCode.Forbidden:
                     throw new UnauthorizedAccessException("Request returned 403 (Forbidden)");
             }
