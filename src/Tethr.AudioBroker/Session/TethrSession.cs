@@ -289,6 +289,8 @@ namespace Tethr.AudioBroker.Session
 
         internal class TokenResponse
         {
+#pragma warning disable 0649 // They are set by Json.net, compiler doesn't think that can happen because it's internal.
+
             // leaving access token as a string as there is no security gained from anything else and only 
             // slows down the calls.  In normal use cases this is used often for the lifetime of the Token, 
             // meaning that string is in clear text the entire time it's valid anyway.
@@ -300,6 +302,7 @@ namespace Tethr.AudioBroker.Session
 
             [JsonProperty("expires_in", Required = Required.Always)]
             public long ExpiresInSeconds;
+#pragma warning restore 0649
 
             public DateTime CreatedTimeStamp { get; set; }
 
