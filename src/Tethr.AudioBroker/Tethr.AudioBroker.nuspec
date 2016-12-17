@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/CollabIP/Tethr.AudioBroker.SDK/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/CollabIP/Tethr.AudioBroker.SDK</projectUrl>
+    <iconUrl>https://tethr.io/assets/images/tethr.svg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Inital Release</releaseNotes>
+    <copyright>Copyright CollabIP, Inc. 2016</copyright>
+    <tags></tags>
+  </metadata>
+</package>
