@@ -3,7 +3,7 @@
   <metadata>
     <id>$id$</id>
     <version>$version$</version>
-    <title>$title$</title>
+    <title>Tethr Audio Broker SDK</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
     <licenseUrl>https://github.com/CollabIP/Tethr.AudioBroker.SDK/blob/master/LICENSE</licenseUrl>
@@ -12,7 +12,6 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>Inital Release</releaseNotes>
-    <copyright>Copyright CollabIP, Inc. 2016</copyright>
     <tags></tags>
   </metadata>
 </package>
