@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Tethr.AudioBroker.Model;
 using Tethr.AudioBroker.Session;
@@ -15,7 +16,6 @@ namespace Tethr.AudioBroker
         Task<ArchiveCallResponse> SendRecordingAsync(RecordingInfo info, Stream waveStream, string mediaType);
         Task<SessionStatus> GetRecordingStatusAsync(string sessionId);
         Task<SessionStatuses> GetRecordingStatusAsync(IEnumerable<string> sessionIds);
-        Task<IEnumerable<RecordingSettingSummary>> GetRecordingSettingsSummariesAsync();
     }
 
     public class TethrArchivedRecording : ITethrArchivedRecording
@@ -26,7 +26,7 @@ namespace Tethr.AudioBroker
         {
             _tethrSession = tethrSession;
         }
-        
+
         public async Task<ArchiveCallResponse> SendRecordingAsync(RecordingInfo info, Stream waveStream, string mediaType)
         {
             // Setting the Audio Format to make sure it matches the media type, RecordingInfo.Audio will be obsoleted at some point in favor of only looking at the media type.
@@ -60,24 +60,13 @@ namespace Tethr.AudioBroker
 
         public async Task<SessionStatus> GetRecordingStatusAsync(string sessionId)
         {
-            var result = await
-                _tethrSession.GetAsync<SessionStatus>($"/callCapture/v1/status/{sessionId}");
-
-            return result;
+            return (await GetRecordingStatusAsync(new[] { sessionId }))?.CallSessions?.FirstOrDefault();
         }
 
         public async Task<SessionStatuses> GetRecordingStatusAsync(IEnumerable<string> sessionIds)
         {
             var result = await
                 _tethrSession.PostAsync<SessionStatuses>("/callCapture/v1/status", new { CallSessionIds = sessionIds });
-
-            return result;
-        }
-
-        public async Task<IEnumerable<RecordingSettingSummary>> GetRecordingSettingsSummariesAsync()
-        {
-            var result = await
-                _tethrSession.GetAsync<IEnumerable<RecordingSettingSummary>>("/sources/v1/recordingSettings");
 
             return result;
         }

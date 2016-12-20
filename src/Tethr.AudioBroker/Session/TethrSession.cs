@@ -79,7 +79,7 @@ namespace Tethr.AudioBroker.Session
                 {
                     EnsureAuthorizedStatusCode(message);
                     if (message.StatusCode == HttpStatusCode.NotFound)
-                        return default(T);
+                        throw new KeyNotFoundException("The requested resource was not found in Tethr");
 
                     message.EnsureSuccessStatusCode();
                     if (message.Content.Headers.ContentType != null && message.Content.Headers.ContentType.MediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase))

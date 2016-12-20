@@ -69,6 +69,7 @@
     <Compile Include="Session\TethrSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TethrArchivedRecording.cs" />
+    <Compile Include="TethrRecordingSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
