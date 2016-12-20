@@ -71,27 +71,24 @@ namespace Tethr.AudioBroker.Session
 
         public async Task<T> GetAsync<T>(string resourcePath)
         {
-            LogConnection(_hostUri, resourcePath);
-            using (var client = new HttpClient { BaseAddress = _hostUri })
+            var client = CreateRequestWithAuthHeader(resourcePath);
+            using (var message = client.Get())
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetApiAuthToken());
-                using (var message = await client.GetAsync(resourcePath))
+                EnsureAuthorizedStatusCode(message);
+                if (message.StatusCode == HttpStatusCode.NotFound)
+                    throw new KeyNotFoundException("The requested resource was not found in Tethr");
+
+                message.EnsureSuccessStatusCode();
+               
+                if (message.ContentType != null && message.Content.Headers.ContentType.MediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase))
                 {
-                    EnsureAuthorizedStatusCode(message);
-                    if (message.StatusCode == HttpStatusCode.NotFound)
-                        throw new KeyNotFoundException("The requested resource was not found in Tethr");
-
-                    message.EnsureSuccessStatusCode();
-                    if (message.Content.Headers.ContentType != null && message.Content.Headers.ContentType.MediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase))
+                    using (var s = await message.Content.ReadAsStreamAsync())
                     {
-                        using (var s = await message.Content.ReadAsStreamAsync())
-                        {
-                            return s.JsonDeserialize<T>();
-                        }
+                        return s.JsonDeserialize<T>();
                     }
-
-                    throw new InvalidOperationException($"Unexpected content type ({message.Content.Headers.ContentType}) returned from server.");
                 }
+
+                throw new InvalidOperationException($"Unexpected content type ({message.Content.Headers.ContentType}) returned from server.");
             }
         }
 
@@ -176,6 +173,19 @@ namespace Tethr.AudioBroker.Session
             }
         }
 
+        private HttpWebRequest CreateRequestWithAuthHeader(string resourcePath)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(new Uri(_hostUri, resourcePath));
+            request.AllowAutoRedirect = false;
+            request.KeepAlive = true;
+            request.UnsafeAuthenticatedConnectionSharing = false;
+            request.PreAuthenticate = true;
+            request.Headers.Add("Authorization", "Bearer " + GetApiAuthToken());
+            request.Accept = "application/json";
+
+            return request;
+        }
+
         private string GetApiAuthToken(bool force = false)
         {
             if (force || _apiToken?.IsValid != true)
@@ -195,7 +205,7 @@ namespace Tethr.AudioBroker.Session
             return _apiToken.AccessToken;
         }
 
-        private void EnsureAuthorizedStatusCode(HttpResponseMessage message)
+        private void EnsureAuthorizedStatusCode(HttpWebResponse message)
         {
             switch (message.StatusCode)
             {
@@ -244,14 +254,14 @@ namespace Tethr.AudioBroker.Session
             }
         }
 
-        private static void LogConnection(Uri requestUri, string resourcePath)
+        private static void LogConnection(WebRequest webRequest)
         {
-            var uri = new Uri(requestUri, resourcePath);
+            var uri = webRequest.RequestUri;
             var proxy = WebRequest.DefaultWebProxy;
             var connectThrough = proxy.GetProxy(uri);
             var message = $"Making a request to {uri}";
 
-            if (connectThrough?.Equals(requestUri) ?? true)
+            if (connectThrough?.Equals(uri) ?? true)
             {
                 message += " through " + connectThrough;
             }

@@ -11,7 +11,7 @@
     <iconUrl>https://tethr.io/assets/images/tethr.svg</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Inital Release</releaseNotes>
+    <releaseNotes>Fixed issues with getting recording status</releaseNotes>
     <tags></tags>
   </metadata>
 </package>
