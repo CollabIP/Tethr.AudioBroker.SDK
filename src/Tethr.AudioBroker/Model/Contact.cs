@@ -5,6 +5,22 @@ namespace Tethr.AudioBroker.Model
     public class Contact
     {
         /// <summary>
+        /// The ID of the contact. 
+        /// This is a string that uniquely identifies the contact
+        /// </summary>
+        public string ReferenceId { get; set; }
+
+        /// <summary>
+        /// The contact's first name
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// The contact's last name
+        /// </summary>
+        public string LastName { get; set; }
+
+        /// <summary>
         /// The audio channel of this contact in the recording.
         /// </summary>
         /// <remarks>

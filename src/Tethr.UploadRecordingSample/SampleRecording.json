@@ -22,11 +22,17 @@
   },
   "contacts": [
     {
+      "referenceId": "124445",
+      "firstName": "John",
+      "lastName": "Doe",
       "channel": 0,
       "phoneNumber": "1007",
       "type": "agent"
     },
     {
+      "referenceId": "55451",
+      "firstName": "Jane",
+      "lastName": "Randomer",
       "channel": 1,
       "phoneNumber": "1001",
       "type": "customer"
