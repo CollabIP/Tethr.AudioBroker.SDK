@@ -46,10 +46,14 @@ namespace Tethr.AudioBroker
             {
                 info.Audio = new Audio { Format = "mp3" };
             }
-            else
-            {
+			else if (string.Equals("audio/ogg", mediaType, StringComparison.OrdinalIgnoreCase))
+			{
+				info.Audio = new Audio { Format = "opus" };
+			}
+			else
+			{
                 //Check the file type is wav, If they are not attaching a file, we only support Wav files.
-                throw new ArgumentException("Only Wav or MP3 files are supported files.");
+                throw new ArgumentException("Only Wav, MP3, or OPUS files are supported files.");
             }
 
             var result = await
