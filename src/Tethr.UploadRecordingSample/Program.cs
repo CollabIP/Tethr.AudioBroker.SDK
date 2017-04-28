@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using Common.Logging;
 using Common.Logging.Simple;
@@ -32,11 +33,11 @@ namespace Tethr.UploadRecordingSample
             LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter();
 
             // Create a Tethr Session and store it for use when we make our API calls.
-            _tethrSession = new TethrSession();
+            _tethrSession = new TethrSession(); // {Proxy = new WebProxy("http://127.0.0.1:8888", false) };
 
             // Send the file, and then await the result.
             var fileName = args.Length < 2 ? "SampleRecording.json" : args[1] ?? "";
-            var result = SendFile(fileName).GetAwaiter().GetResult();
+            var result = Task.Run(() => SendFile(fileName)).GetAwaiter().GetResult();
 
             Console.WriteLine("Sent recording:");
             Console.WriteLine("\tSession id       : {0}", result.SessionId);

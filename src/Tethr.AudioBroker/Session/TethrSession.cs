@@ -61,6 +61,8 @@ namespace Tethr.AudioBroker.Session
         /// </remarks>
         public bool ResetAuthTokenOnUnauthorized { get; set; } = true;
 
+        public IWebProxy Proxy { get; set; } = WebRequest.DefaultWebProxy;
+
         public void ClearAuthToken()
         {
             lock (_authLock)
@@ -72,7 +74,7 @@ namespace Tethr.AudioBroker.Session
         public async Task<T> GetAsync<T>(string resourcePath)
         {
             LogConnection(_hostUri, resourcePath);
-            using (var client = new HttpClient { BaseAddress = _hostUri })
+            using (var client = new HttpClient(CreateHttpClientHandler()) { BaseAddress = _hostUri })
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetApiAuthToken());
                 using (var message = await client.GetAsync(resourcePath))
@@ -105,7 +107,7 @@ namespace Tethr.AudioBroker.Session
                 streamContent.Headers.ContentType = new MediaTypeHeaderValue(dataPartMediaType);
                 content.Add(infoContent, "info");
                 content.Add(streamContent, "data");
-                using (var client = new HttpClient())
+                using (var client = new HttpClient(CreateHttpClientHandler()))
                 {
                     client.Timeout = TimeSpan.FromMinutes(5);
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetApiAuthToken());
@@ -130,7 +132,7 @@ namespace Tethr.AudioBroker.Session
         public async Task<TOut> PostAsync<TOut>(string resourcePath, object body)
         {
             LogConnection(_hostUri, resourcePath);
-            using (var client = new HttpClient { BaseAddress = _hostUri })
+            using (var client = new HttpClient(CreateHttpClientHandler()) { BaseAddress = _hostUri })
             {
                 using (HttpContent r = new StringContent(
                     JsonConvert.SerializeObject(body),
@@ -159,7 +161,7 @@ namespace Tethr.AudioBroker.Session
         public async Task PostAsync(string resourcePath, object body)
         {
             LogConnection(_hostUri, resourcePath);
-            using (var client = new HttpClient { BaseAddress = _hostUri })
+            using (var client = new HttpClient(CreateHttpClientHandler()) { BaseAddress = _hostUri })
             {
                 using (HttpContent r = new StringContent(
                     body == null ? string.Empty : JsonConvert.SerializeObject(body),
@@ -210,9 +212,9 @@ namespace Tethr.AudioBroker.Session
             }
         }
 
-        private static async Task<TokenResponse> GetClientCredentialsAsync(Uri hostUri, string clientId, SecureString clientSecret)
+        private async Task<TokenResponse> GetClientCredentialsAsync(Uri hostUri, string clientId, SecureString clientSecret)
         {
-            using (var client = new HttpClient())
+            using (var client = new HttpClient(CreateHttpClientHandler()))
             {
                 Log.Info($"Requesting new token from {hostUri.Host}");
 
@@ -244,14 +246,17 @@ namespace Tethr.AudioBroker.Session
             }
         }
 
-        private static void LogConnection(Uri requestUri, string resourcePath)
+        private void LogConnection(Uri requestUri, string resourcePath)
         {
+            if(!Log.IsDebugEnabled)
+                return;
+
             var uri = new Uri(requestUri, resourcePath);
-            var proxy = WebRequest.DefaultWebProxy;
+            var proxy = Proxy;
             var connectThrough = proxy.GetProxy(uri);
             var message = $"Making a request to {uri}";
 
-            if (connectThrough?.Equals(requestUri) ?? true)
+            if ((connectThrough?.Equals(uri) ?? true) == false)
             {
                 message += " through " + connectThrough;
             }
@@ -285,6 +290,19 @@ namespace Tethr.AudioBroker.Session
             }
 
             return secure;
+        }
+
+        private HttpClientHandler CreateHttpClientHandler()
+        {
+            var httpHandler = new HttpClientHandler { UseCookies = false };
+            var proxy = Proxy;
+            if (proxy != null)
+            {
+                httpHandler.Proxy = proxy;
+                httpHandler.UseProxy = true;
+            }
+
+            return httpHandler;
         }
 
         internal class TokenResponse
