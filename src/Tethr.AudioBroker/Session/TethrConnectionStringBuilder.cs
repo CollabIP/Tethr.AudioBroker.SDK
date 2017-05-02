@@ -13,7 +13,7 @@ namespace Tethr.AudioBroker.Session
             if (connectionStringSettings == null)
             {
                 throw new InvalidOperationException(
-                    $"Could not find a connection string for Tethr. Please add a connection string in the <ConnectionStrings> section of the application's configuration file. For example: <add name=\"{connectionStringName}\" connectionString=\"uri=https://YourCompanyNameHere.Tethr.io/;ApiUser=YourUserNameHere;Password=YourPasswordHere\" />");
+                    $"Could not find a connection string for Tethr. Please add a connection string in the <ConnectionStrings> section of the application's configuration file. For example: <add name=\"{connectionStringName}\" connectionString=\"uri=https://YourCompanyNameHere.Audio.Tethr.io/;ApiUser=YourUserNameHere;Password=YourPasswordHere\" />");
             }
 
             return new TethrConnectionStringBuilder { ConnectionString = connectionStringSettings.ConnectionString };

@@ -13,7 +13,7 @@ using Tethr.AudioBroker.Session;
 // The credentials for connecting to the Tethr environment
 // are stored in the App.config file (UploadRecording.exe.config after build)
 // 
-// <add name="Tethr" connectionString="uri=https://YourCompanyNameHere.Tethr.io/;ApiUser=YourUserNameHere;Password=YourPasswordHere" />
+// <add name="Tethr" connectionString="uri=https://YourCompanyNameHere.Audio.Tethr.io/;ApiUser=YourUserNameHere;Password=YourPasswordHere" />
 //
 // Invoke this demo app by passing the path to a json file (which is preformatted for the HTTPS request)
 // A wav file is assumed to be "next to" the metadata file and have the same name.
