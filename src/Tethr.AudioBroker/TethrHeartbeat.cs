@@ -31,7 +31,7 @@ namespace Tethr.AudioBroker
 				Name = Environment.MachineName,
 				Status = monitorStatus,
 				TimeStamp = DateTimeOffset.UtcNow,
-                SoftwareVersion = fileVersionInfo?.ProductName + " " + fileVersionInfo?.ProductVersion
+                SoftwareVersion = fileVersionInfo?.ProductVersion
             });
 		}
 	}

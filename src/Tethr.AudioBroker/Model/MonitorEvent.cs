@@ -26,11 +26,11 @@ namespace Tethr.AudioBroker.Model
 		public string Name { get; set; }
 
 	    /// <summary>
-	    /// Software Name and Version
+	    /// Software Version
 	    /// </summary>
 	    /// <remarks>
-	    /// This is a string indicating the software and the version number
-	    /// Example: 'Numonix Broker 1.0.0.29'
+	    /// This is a string indicating the version number
+	    /// Example: '1.0.0.29'
 	    /// </remarks>
 	    public string SoftwareVersion { get; set; }
 
