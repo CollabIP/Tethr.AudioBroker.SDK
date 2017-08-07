@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Tethr.AudioBroker.Model;
@@ -17,12 +19,20 @@ namespace Tethr.AudioBroker
 	{
 		public static async Task Send(this ITethrHeartbeat heartbeat, MonitorStatus monitorStatus)
 		{
-			await heartbeat.Send(new MonitorEvent
+		    var assembly = Assembly.GetExecutingAssembly();
+		    FileVersionInfo fileVersionInfo = null;
+		    if (assembly.Location != null)
+		    {
+		        fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            }
+
+            await heartbeat.Send(new MonitorEvent
 			{
 				Name = Environment.MachineName,
 				Status = monitorStatus,
-				TimeStamp = DateTimeOffset.UtcNow
-			});
+				TimeStamp = DateTimeOffset.UtcNow,
+                SoftwareVersion = fileVersionInfo?.ProductName + " " + fileVersionInfo?.ProductVersion
+            });
 		}
 	}
 

@@ -24,9 +24,19 @@ namespace Tethr.AudioBroker.Model
 		/// you are going to support more then one broker on a given system.
 		/// </remarks>
 		public string Name { get; set; }
-	}
 
-	public enum MonitorStatus
+	    /// <summary>
+	    /// Software Name and Version
+	    /// </summary>
+	    /// <remarks>
+	    /// This is a string indicating the software and the version number
+	    /// Example: 'Numonix Broker 1.0.0.29'
+	    /// </remarks>
+	    public string SoftwareVersion { get; set; }
+
+    }
+
+    public enum MonitorStatus
 	{
 		/// <summary>
 		/// The status is unknown or not specified at this time.
