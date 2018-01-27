@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Tethr.AudioBroker.Model;
 using Tethr.AudioBroker.Session;
@@ -75,25 +76,7 @@ namespace Tethr.AudioBroker.DesktopApp
 						return;
 				}
 
-				var metadata = new JObject();
-				foreach (var callMetaDataItem in CallMetaDataItems)
-				{
-					metadata[callMetaDataItem.Key] = new JValue(callMetaDataItem.Value);
-				}
-
-				var settings = new RecordingInfo
-				{
-					StartTime = DateTime.Now.ToUniversalTime(),
-					Metadata = metadata,
-					SessionId = string.IsNullOrEmpty(this.SessionId.Text) ? Guid.NewGuid().ToString() : this.SessionId.Text,
-					MasterCallId = string.IsNullOrEmpty(this.MasterCallId.Text) ? null : this.MasterCallId.Text,
-					NumberDialed = this.NumberDialed.Text,
-
-					// TODO: Get call Direction from dropdown.
-					//Direction = this.CallDirection.SelectionBoxItem == null ? Model.CallDirection.Unknown 
-
-					// TODO: Fill in Contacts
-				};
+				var settings = CreateRecordingInfo();
 
 				this.IsEnabled = false;
 				var hostUri = new Uri(this.UrlEndPoint.Text);
@@ -128,6 +111,61 @@ namespace Tethr.AudioBroker.DesktopApp
 			{
 				this.IsEnabled = true;
 				MessageBox.Show(exception.Message, "Error preping to send call", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+		private RecordingInfo CreateRecordingInfo()
+		{
+			var metadata = new JObject();
+			foreach (var callMetaDataItem in CallMetaDataItems)
+			{
+				metadata[callMetaDataItem.Key] = new JValue(callMetaDataItem.Value);
+			}
+
+			var settings = new RecordingInfo
+			{
+				StartTime = DateTime.Now.ToUniversalTime(),
+				Metadata = metadata,
+				SessionId = string.IsNullOrEmpty(this.SessionId.Text) ? Guid.NewGuid().ToString() : this.SessionId.Text,
+				MasterCallId = string.IsNullOrEmpty(this.MasterCallId.Text) ? null : this.MasterCallId.Text,
+				NumberDialed = this.NumberDialed.Text,
+
+				// TODO: Get call Direction from dropdown.
+				//Direction = this.CallDirection.SelectionBoxItem == null ? Model.CallDirection.Unknown 
+
+				// TODO: Get the channel data from dropdown.
+				Contacts = new List<Contact>
+				{
+					new Contact
+					{
+						Channel = 0,
+						Type = "Customer",
+						PhoneNumber = this.CustomerNumber.Text
+					}
+					, new Contact()
+					{
+						Channel = 1,
+						Type = "Agent",
+						FirstName = this.AgentFirstName.Text,
+						LastName = this.AgentLastName.Text,
+						PhoneNumber = this.AgentExtention.Text,
+						ReferenceId = this.AgentRefId.Text
+					}
+				}
+			};
+			return settings;
+		}
+
+		private void PreviewCallDataClick(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				CallDataPreview.Text = JsonConvert.SerializeObject(CreateRecordingInfo(), Formatting.Indented);
+			}
+			catch (Exception exception)
+			{
+				CallDataPreview.Text = string.Empty;
+				MessageBox.Show(exception.Message, "Error generating call data preview", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 	}
