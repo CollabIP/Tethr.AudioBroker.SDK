@@ -33,7 +33,7 @@ namespace Tethr.UploadRecordingSample
             LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter();
 
             // Create a Tethr Session and store it for use when we make our API calls.
-            _tethrSession = new TethrSession(); // {Proxy = new WebProxy("http://127.0.0.1:8888", false) };
+            _tethrSession = new TethrSession(); // {DefaultProxy = new WebProxy("http://127.0.0.1:8888", false) };
 
             // Send the file, and then await the result.
             var fileName = args.Length < 2 ? "SampleRecording.json" : args[1] ?? "";
