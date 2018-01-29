@@ -7,13 +7,13 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Tethr.AudioBroker.DesktopApp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Tethr® Audio Broker Desktop")]
+[assembly: AssemblyDescription("Desktop application for uploading call audio and metadata to Tethr")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Tethr.AudioBroker.DesktopApp")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("CollabIP, inc.")]
+[assembly: AssemblyProduct("Tethr® Desktop Client")]
+[assembly: AssemblyCopyright("Copyright © CollabIP, inc. 2018")]
+[assembly: AssemblyTrademark("Tethr is a trademark of CollabIP, inc. CollabIP is a trademark of CollabIP, inc.")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
