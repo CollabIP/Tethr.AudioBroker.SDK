@@ -8,16 +8,19 @@ namespace Tethr.AudioBroker.Model
         /// The ID of the contact. 
         /// This is a string that uniquely identifies the contact
         /// </summary>
+		[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
         public string ReferenceId { get; set; }
 
         /// <summary>
         /// The contact's first name
         /// </summary>
+		[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
         public string FirstName { get; set; }
 
         /// <summary>
         /// The contact's last name
         /// </summary>
+		[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
         public string LastName { get; set; }
 
         /// <summary>
@@ -37,6 +40,7 @@ namespace Tethr.AudioBroker.Model
         /// <summary>
         /// (Optional) The phone number of extension of this contact
         /// </summary>
+		[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
         public string PhoneNumber { get; set; }
 
         /// <summary>
