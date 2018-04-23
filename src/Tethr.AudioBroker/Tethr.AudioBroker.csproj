@@ -60,6 +60,9 @@
     <Compile Include="Model\AudioMediaTypes.cs" />
     <Compile Include="Model\CallDirection.cs" />
     <Compile Include="Model\CallShare.cs" />
+    <Compile Include="Model\ChatContact.cs" />
+    <Compile Include="Model\ChatMessage.cs" />
+    <Compile Include="Model\ChatSession.cs" />
     <Compile Include="Model\Contact.cs" />
     <Compile Include="Model\MonitorEvent.cs" />
     <Compile Include="Session\TethrExtensions.cs" />
@@ -71,6 +74,7 @@
     <Compile Include="Session\TethrSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TethrArchivedRecording.cs" />
+    <Compile Include="TethrChat.cs" />
     <Compile Include="TethrHeartbeat.cs" />
     <Compile Include="TethrRecordingSettings.cs" />
     <Compile Include="TethrShareCall.cs" />
