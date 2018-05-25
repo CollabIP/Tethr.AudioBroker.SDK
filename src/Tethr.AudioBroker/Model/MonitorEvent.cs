@@ -45,7 +45,7 @@ namespace Tethr.AudioBroker.Model
 		/// <summary>
 		/// Everything is working as expected.
 		/// </summary>
-		Healthly = 1,
+		Healthy = 1,
 		/// <summary>
 		/// The system is online, but something is out of normal parameters.
 		/// </summary>

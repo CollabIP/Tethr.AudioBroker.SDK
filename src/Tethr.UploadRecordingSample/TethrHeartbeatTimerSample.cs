@@ -38,7 +38,7 @@ namespace Tethr.UploadRecordingSample
 		/// Setup a call back for checking the status health of the broker.
 		/// </summary>
 		/// <remarks>
-		/// This allows for the broker to check other internal status indicators to see if the system is health.
+		/// This allows for the broker to check other internal status indicators to see if the system is healthy.
 		/// If a call back is not set, a default value of Healthy will be sent to Tethr.
 		/// </remarks>
 		/// <param name="getStatusCallback">A function that will return the current status of the broker</param>
@@ -58,7 +58,7 @@ namespace Tethr.UploadRecordingSample
 			{
 				try
 				{
-					var status = MonitorStatus.Healthly;
+					var status = MonitorStatus.Healthy;
 					var cb = _getStatusCallback;
 					if (cb != null)
 						status = cb();

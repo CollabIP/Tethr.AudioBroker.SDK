@@ -69,7 +69,8 @@ namespace Tethr.AudioBroker.Model
 					_startTime = value.ToUniversalTime();
 				else
 				{
-					Debug.Assert(value.Kind == DateTimeKind.Utc, "Start time kind is Unspecified, this could result in incorrect times showing up in Tethr");
+					Debug.Assert(value.Kind == DateTimeKind.Utc,
+						"Start time kind is Unspecified, this could result in incorrect times showing up in Tethr");
 					_startTime = value;
 				}
 			}
@@ -78,7 +79,7 @@ namespace Tethr.AudioBroker.Model
 		/// <summary>
 		/// The end time of the call, this value should be in UTC.
 		/// </summary>
-		[JsonProperty(Required = Required.Always)]
+		[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
 		public DateTime EndTime
 		{
 			get { return _endTime; }
@@ -88,7 +89,8 @@ namespace Tethr.AudioBroker.Model
 					_endTime = value.ToUniversalTime();
 				else
 				{
-					Debug.Assert(value.Kind == DateTimeKind.Utc, "End time kind is Unspecified, this could result in incorrect times showing up in Tethr");
+					Debug.Assert(value.Kind == DateTimeKind.Utc,
+						"End time kind is Unspecified, this could result in incorrect times showing up in Tethr");
 					_endTime = value;
 				}
 			}
