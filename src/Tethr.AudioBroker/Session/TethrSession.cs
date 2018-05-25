@@ -213,8 +213,8 @@ namespace Tethr.AudioBroker.Session
 					if (force || _apiToken?.IsValid != true)
 					{
 						// Would like to have this called via Async, but because we are in a lock
-						// we would need to pull in another 3rd party library, and we 
-						var t = GetClientCredentialsAsync(_apiUser, _apiPassword).GetAwaiter().GetResult();
+						// we would need to pull in another 3rd party library.
+						var t = GetClientCredentialsAsync(_apiUser, _apiPassword).ConfigureAwait(false).GetAwaiter().GetResult();
 						_apiToken = t;
 					}
 				}
