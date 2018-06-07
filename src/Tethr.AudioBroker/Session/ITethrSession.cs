@@ -50,10 +50,10 @@ namespace Tethr.AudioBroker.Session
         /// </summary>
         /// <typeparam name="TOut">The object to fill with the result from the server.</typeparam>
         /// <param name="resourcePath">The path to the resource to get.</param>
-        /// <param name="info">The content to be sterilized and send in the Info part of the request</param>
-        /// <param name="buffer">The binary data part of the request</param>
-        /// <param name="dataPartMediaType">The MediaType of the binary data being sent to the server</param>
+        /// <param name="info">The content to be sterilized and send in the Info part of the request.</param>
+        /// <param name="buffer">The binary data part of the request.</param>
+        /// <param name="dataPartMediaType">The MediaType of the binary data being sent to the server.</param>
         /// <returns>TOut filled with the result from the server.</returns>
-        Task<TOut> PostMutliPartAsync<TOut>(string resourcePath, object info, Stream buffer, string dataPartMediaType = "application/octet-stream");
+        Task<TOut> PostMultiPartAsync<TOut>(string resourcePath, object info, Stream buffer, string dataPartMediaType = "application/octet-stream");
     }
 }

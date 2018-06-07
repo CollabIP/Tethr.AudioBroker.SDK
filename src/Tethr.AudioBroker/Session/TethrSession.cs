@@ -121,7 +121,7 @@ namespace Tethr.AudioBroker.Session
 			}
 		}
 
-		public async Task<TOut> PostMutliPartAsync<TOut>(string resourcePath, object info, Stream buffer, string dataPartMediaType = "application/octet-stream")
+		public async Task<TOut> PostMultiPartAsync<TOut>(string resourcePath, object info, Stream buffer, string dataPartMediaType = "application/octet-stream")
 		{
 			LogConnection(resourcePath);
 			using (var content = new MultipartFormDataContent(Guid.NewGuid().ToString()))
@@ -200,7 +200,7 @@ namespace Tethr.AudioBroker.Session
 		private Uri CreateUri(string uri)
 		{
 			if (string.IsNullOrEmpty(uri))
-				return (Uri)null;
+				return null;
 			return new Uri(uri, UriKind.Relative);
 		}
 
