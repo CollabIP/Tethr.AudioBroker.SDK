@@ -223,13 +223,18 @@ namespace Tethr.AudioBroker.Session
 			{
 				_authSemaphore.Wait();
 
-				if (force || _apiToken?.IsValid != true)
+				try
 				{
-					var t = await GetClientCredentialsAsync(_apiUser, _apiPassword).ConfigureAwait(false);
-					_apiToken = t;
+					if (force || _apiToken?.IsValid != true)
+					{
+						var t = await GetClientCredentialsAsync(_apiUser, _apiPassword).ConfigureAwait(false);
+						_apiToken = t;
+					}
 				}
-
-				_authSemaphore.Release();
+				finally
+				{
+					_authSemaphore.Release();
+				}
 			}
 
 			return _apiToken.AccessToken;
