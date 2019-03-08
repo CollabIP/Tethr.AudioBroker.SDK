@@ -24,6 +24,11 @@ namespace Tethr.AudioBroker.Model
 		public string SessionId { get; set; }
 
 		/// <summary>
+		/// A unique identify that may be shared between one or more chats, that together represent one complete chat.
+		/// </summary>
+		public string MasterCallId { get; set; }
+		
+		/// <summary>
 		/// The start time of the Chat session, this value should be in UTC.
 		/// </summary>
 		[JsonProperty(Required = Required.Always)]
