@@ -121,12 +121,18 @@ namespace Tethr.AudioBroker.Session
 			}
 		}
 
-		public async Task<TOut> PostMutliPartAsync<TOut>(string resourcePath, object info, Stream buffer, string dataPartMediaType = "application/octet-stream")
+		public async Task<TOut> PostMultiPartAsync<TOut>(string resourcePath, object info, Stream buffer,
+			string dataPartMediaType = "application/octet-stream")
+		{
+			return await PostMultiPartAsync<TOut>(resourcePath, JsonConvert.SerializeObject(info), buffer, dataPartMediaType);
+		}
+		
+		public async Task<TOut> PostMultiPartAsync<TOut>(string resourcePath, string info, Stream buffer, string dataPartMediaType = "application/octet-stream")
 		{
 			LogConnection(resourcePath);
 			using (var content = new MultipartFormDataContent(Guid.NewGuid().ToString()))
 			{
-				var infoContent = new StringContent(JsonConvert.SerializeObject(info), Encoding.UTF8, "application/json");
+				var infoContent = new StringContent(info, Encoding.UTF8, "application/json");
 				var streamContent = new StreamContent(buffer);
 				streamContent.Headers.ContentType = new MediaTypeHeaderValue(dataPartMediaType);
 				content.Add(infoContent, "info");

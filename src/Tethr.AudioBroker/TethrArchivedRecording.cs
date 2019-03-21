@@ -57,7 +57,7 @@ namespace Tethr.AudioBroker
             }
 
             var result = await
-                _tethrSession.PostMutliPartAsync<ArchiveCallResponse>("/callCapture/v1/archive", info, waveStream, mediaType);
+                _tethrSession.PostMultiPartAsync<ArchiveCallResponse>("/callCapture/v1/archive", info, waveStream, mediaType);
 
             return result;
         }
