@@ -29,11 +29,10 @@ namespace Tethr.AudioBroker.Session
 		private readonly SecureString _apiPassword;
 		private readonly HttpClient _client;
 		private TokenResponse _apiToken;
-		private readonly HttpClientHandler _httpClientHandler;
 
-		public TethrSession(Uri hostUri, string apiUser, string apiPassword):
+		public TethrSession(Uri hostUri, string apiUser, string apiPassword) :
 			this(hostUri, apiUser, ToSecureString(apiPassword))
-		{}
+		{ }
 
 		public TethrSession(Uri hostUri, string apiUser, SecureString apiPassword)
 		{
@@ -44,12 +43,7 @@ namespace Tethr.AudioBroker.Session
 
 			_apiUser = apiUser;
 			_apiPassword = apiPassword;
-			_httpClientHandler = CreateHttpClientHandler();
-			_client = new HttpClient(_httpClientHandler)
-			{
-				BaseAddress = hostUri,
-				Timeout = TimeSpan.FromMinutes(5)
-			};
+			_client = CreateHttpClient(hostUri);
 		}
 
 		public TethrSession(string connectionStringName = "Tethr")
@@ -64,12 +58,7 @@ namespace Tethr.AudioBroker.Session
 
 			_apiUser = connectionString.ApiUser;
 			_apiPassword = ToSecureString(connectionString.Password);
-			_httpClientHandler = CreateHttpClientHandler();
-			_client = new HttpClient(_httpClientHandler)
-			{
-				BaseAddress = hostUri,
-				Timeout = TimeSpan.FromMinutes(5)
-			};
+			_client = CreateHttpClient(hostUri);
 		}
 
 		/// <summary>
@@ -99,8 +88,7 @@ namespace Tethr.AudioBroker.Session
 
 		public async Task<T> GetAsync<T>(string resourcePath)
 		{
-			LogConnection(resourcePath);
-			var request = new HttpRequestMessage(HttpMethod.Get, resourcePath);
+			var request = new HttpRequestMessage(HttpMethod.Get, CreateUri(resourcePath));
 			request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", GetApiAuthToken());
 			using (var message = await _client.SendAsync(request))
 			{
@@ -126,10 +114,9 @@ namespace Tethr.AudioBroker.Session
 		{
 			return await PostMultiPartAsync<TOut>(resourcePath, JsonConvert.SerializeObject(info), buffer, dataPartMediaType);
 		}
-		
+
 		public async Task<TOut> PostMultiPartAsync<TOut>(string resourcePath, string info, Stream buffer, string dataPartMediaType = "application/octet-stream")
 		{
-			LogConnection(resourcePath);
 			using (var content = new MultipartFormDataContent(Guid.NewGuid().ToString()))
 			{
 				var infoContent = new StringContent(info, Encoding.UTF8, "application/json");
@@ -159,8 +146,6 @@ namespace Tethr.AudioBroker.Session
 
 		public async Task<TOut> PostAsync<TOut>(string resourcePath, object body)
 		{
-			LogConnection(resourcePath);
-
 			using (HttpContent content = new StringContent(
 				JsonConvert.SerializeObject(body),
 				Encoding.UTF8,
@@ -187,7 +172,6 @@ namespace Tethr.AudioBroker.Session
 
 		public async Task PostAsync(string resourcePath, object body)
 		{
-			LogConnection(resourcePath);
 			using (HttpContent content = new StringContent(
 				body == null ? string.Empty : JsonConvert.SerializeObject(body),
 				Encoding.UTF8,
@@ -206,8 +190,11 @@ namespace Tethr.AudioBroker.Session
 		private Uri CreateUri(string uri)
 		{
 			if (string.IsNullOrEmpty(uri))
-				return (Uri)null;
-			return new Uri(uri, UriKind.Relative);
+				return null;
+			var u = new Uri(uri, UriKind.Relative);
+			if (Log.IsDebugEnabled)
+				Log.Debug($"Making a request to {u}");
+			return u;
 		}
 
 		private string GetApiAuthToken(bool force = false)
@@ -274,27 +261,6 @@ namespace Tethr.AudioBroker.Session
 			}
 		}
 
-		private void LogConnection(string resourcePath)
-		{
-			if (!Log.IsDebugEnabled)
-				return;
-
-			var uri = new Uri(_client.BaseAddress, resourcePath);
-			var message = $"Making a request to {uri}";
-
-			if (_httpClientHandler.UseProxy && _httpClientHandler.Proxy != null)
-			{
-				var connectThrough = _httpClientHandler.Proxy.GetProxy(uri);
-
-				if ((connectThrough?.Equals(uri) ?? true) == false)
-				{
-					message += " through " + connectThrough;
-				}
-			}
-
-			Log.Debug(message);
-		}
-
 		private static string ToUnsecureString(SecureString securePassword)
 		{
 			if (securePassword == null)
@@ -323,17 +289,26 @@ namespace Tethr.AudioBroker.Session
 			return secure;
 		}
 
-		private HttpClientHandler CreateHttpClientHandler()
+		private HttpClient CreateHttpClient(Uri hostUri)
 		{
-			var httpHandler = new HttpClientHandler { UseCookies = false , AllowAutoRedirect = false};
+			var message = $"Requests for Tethr to {hostUri}";
+
+			var httpHandler = new HttpClientHandler { UseCookies = false, AllowAutoRedirect = false };
 			var proxy = DefaultProxy;
 			if (proxy != null)
 			{
 				httpHandler.Proxy = proxy;
 				httpHandler.UseProxy = true;
+				var connectThrough = proxy.GetProxy(hostUri);
+				message += $" through {connectThrough}";
 			}
 
-			return httpHandler;
+			Log.Info(message);
+			return new HttpClient(httpHandler, true)
+			{
+				BaseAddress = hostUri,
+				Timeout = TimeSpan.FromMinutes(5)
+			};
 		}
 
 		internal class TokenResponse
