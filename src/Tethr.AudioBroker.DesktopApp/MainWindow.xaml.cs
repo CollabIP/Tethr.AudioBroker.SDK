@@ -35,6 +35,10 @@ namespace Tethr.AudioBroker.DesktopApp
 
 		public MainWindow()
 		{
+			// Set the product info header, used to update the HTTP User-Agent for requests to Tethr.
+			var type = typeof(MainWindow);
+			TethrSession.SetProductInfoHeaderValue(type.Namespace, type.Assembly.GetName().Version.ToString());
+
 			InitializeComponent();
 			CallMetaData.ItemsSource = CallMetaDataItems;
 

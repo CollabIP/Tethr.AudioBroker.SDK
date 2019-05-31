@@ -24,6 +24,7 @@ namespace Tethr.AudioBroker.Session
 	public class TethrSession : ITethrSession, IDisposable
 	{
 		private static readonly ILog Log = LogManager.GetLogger(typeof(TethrSession));
+		private static ProductInfoHeaderValue _productInfoHeaderValue = null;
 		private readonly object _authLock = new object();
 		private readonly string _apiUser;
 		private readonly SecureString _apiPassword;
@@ -77,6 +78,16 @@ namespace Tethr.AudioBroker.Session
 		public bool ResetAuthTokenOnUnauthorized { get; set; } = true;
 
 		public static IWebProxy DefaultProxy { get; set; } = WebRequest.DefaultWebProxy;
+
+		/// <summary>
+		/// Add data used to in the HTTP User-Agent Header for requests to Tethr.
+		/// </summary>
+		/// <param name="product">The name of the product</param>
+		/// <param name="version">The version number of the product</param>
+		public static void SetProductInfoHeaderValue(string product, string version)
+		{
+			_productInfoHeaderValue = new ProductInfoHeaderValue(product, version);
+		} 
 
 		public void ClearAuthToken()
 		{
@@ -291,7 +302,8 @@ namespace Tethr.AudioBroker.Session
 
 		private HttpClient CreateHttpClient(Uri hostUri)
 		{
-			var message = $"Requests for Tethr to {hostUri}";
+			var version = typeof(TethrSession).Assembly.GetName().Version;
+			var message = $"Requests for Tethr to {hostUri} using SDK version {version}";
 
 			var httpHandler = new HttpClientHandler { UseCookies = false, AllowAutoRedirect = false };
 			var proxy = DefaultProxy;
@@ -304,11 +316,22 @@ namespace Tethr.AudioBroker.Session
 			}
 
 			Log.Info(message);
-			return new HttpClient(httpHandler, true)
+			var client = new HttpClient(httpHandler, true)
 			{
 				BaseAddress = hostUri,
-				Timeout = TimeSpan.FromMinutes(5)
-			};
+				Timeout = TimeSpan.FromMinutes(5),
+				DefaultRequestHeaders = { UserAgent =
+				{
+					new ProductInfoHeaderValue("TethrAudioBroker", version.ToString()),
+					new ProductInfoHeaderValue($"({Environment.OSVersion.ToString()})"),
+					new ProductInfoHeaderValue("DotNet-CLR", Environment.Version.ToString())
+				} }
+			}; 
+
+			if(_productInfoHeaderValue != null)
+				client.DefaultRequestHeaders.UserAgent.Add(_productInfoHeaderValue);
+
+			return client;
 		}
 
 		internal class TokenResponse

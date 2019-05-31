@@ -34,6 +34,10 @@ namespace Tethr.UploadRecordingSample
 			// Setup Common Logger
 			LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter();
 
+			// Set the product info header, used to update the HTTP User-Agent for requests to Tethr.
+			var programType = typeof(Program);
+			TethrSession.SetProductInfoHeaderValue(programType.Namespace, programType.Assembly.GetName().Version.ToString());
+
 			// Create a Tethr Session and store it for use when we make our API calls.
 			_tethrSession = new TethrSession(); // {DefaultProxy = new WebProxy("http://127.0.0.1:8888", false) };
 
