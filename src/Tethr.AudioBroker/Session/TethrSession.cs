@@ -150,7 +150,7 @@ namespace Tethr.AudioBroker.Session
 						}
 					}
 
-					return default(TOut);
+					return default;
 				}
 			}
 		}
@@ -300,7 +300,7 @@ namespace Tethr.AudioBroker.Session
 			return secure;
 		}
 
-		private HttpClient CreateHttpClient(Uri hostUri)
+		private static HttpClient CreateHttpClient(Uri hostUri)
 		{
 			var version = typeof(TethrSession).Assembly.GetName().Version;
 			var message = $"Requests for Tethr to {hostUri} using SDK version {version}";

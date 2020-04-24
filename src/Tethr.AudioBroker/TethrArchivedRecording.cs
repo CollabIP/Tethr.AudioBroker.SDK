@@ -16,6 +16,8 @@ namespace Tethr.AudioBroker
         Task<ArchiveCallResponse> SendRecordingAsync(RecordingInfo info, Stream waveStream, string mediaType);
         Task<SessionStatus> GetRecordingStatusAsync(string sessionId);
         Task<SessionStatuses> GetRecordingStatusAsync(IEnumerable<string> sessionIds);
+        Task SetExcludedStatusAsync(string sessionId);
+        Task SetExcludedStatusAsync(IEnumerable<string> sessionIds);
     }
 
     public class TethrArchivedRecording : ITethrArchivedRecording
@@ -73,6 +75,16 @@ namespace Tethr.AudioBroker
                 _tethrSession.PostAsync<SessionStatuses>("/callCapture/v1/status", new { CallSessionIds = sessionIds });
 
             return result;
+        }
+
+        public async Task SetExcludedStatusAsync(string sessionId)
+        {
+            await SetExcludedStatusAsync(new[] { sessionId });
+        }
+        
+        public async Task SetExcludedStatusAsync(IEnumerable<string> sessionIds)
+        {
+            await _tethrSession.PostAsync("/callCapture/v1/excluded", new { CallSessionIds = sessionIds });
         }
     }
 }
