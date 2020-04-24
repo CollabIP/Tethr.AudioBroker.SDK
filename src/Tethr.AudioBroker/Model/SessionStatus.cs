@@ -24,7 +24,12 @@ namespace Tethr.AudioBroker.Model
         /// </summary>
         NotFound,
 
-        Error
+        Error,
+        
+        /// <summary>
+        /// The call was excluded during processing.
+        /// </summary>
+        Excluded
     }
      
     public class SessionStatuses
