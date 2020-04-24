@@ -24,6 +24,9 @@ namespace Tethr.AudioBroker.Model
         /// </summary>
         NotFound,
 
+        /// <summary>
+        /// The call has error.
+        /// </summary>
         Error,
         
         /// <summary>
