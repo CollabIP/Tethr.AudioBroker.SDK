@@ -84,7 +84,7 @@ namespace Tethr.AudioBroker
         
         public async Task SetExcludedStatusAsync(IEnumerable<string> sessionIds)
         {
-            await _tethrSession.PostAsync("/callCapture/v1/excluded", new { CallSessionIds = sessionIds });
+            await _tethrSession.PostAsync("/callCapture/v1/exclude", new { CallSessionIds = sessionIds });
         }
     }
 }
