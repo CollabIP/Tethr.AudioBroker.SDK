@@ -150,7 +150,7 @@ namespace Tethr.AudioBroker.Session
 						}
 					}
 
-					return default;
+					return default(TOut);
 				}
 			}
 		}
