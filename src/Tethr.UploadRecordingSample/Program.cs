@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Common.Logging;
-using Common.Logging.Simple;
 using Tethr.AudioBroker;
 using Tethr.AudioBroker.Model;
 using Tethr.AudioBroker.Session;
@@ -20,7 +20,7 @@ using Tethr.AudioBroker.Session;
 
 namespace Tethr.UploadRecordingSample
 {
-	class Program
+	internal class Program
 	{
 		// The TethrSession object should be a singleton, and reused on subsequent sends so that
 		// the oauth bearer token can be reused and refreshed only when it expires
@@ -29,16 +29,27 @@ namespace Tethr.UploadRecordingSample
 		static void Main(string[] args)
 		{
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-			// Setup Common Logger
+			
+			// Setup Common Logger with default settings
 			LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter();
 
 			// Set the product info header, used to update the HTTP User-Agent for requests to Tethr.
 			var programType = typeof(Program);
 			TethrSession.SetProductInfoHeaderValue(programType.Namespace, programType.Assembly.GetName().Version.ToString());
 
+			// Get the connection string so that we can initialize a Tethr session
+			var connectionStringSettings = ConfigurationManager.ConnectionStrings["Tethr"];
+			if (connectionStringSettings == null)
+			{
+				throw new InvalidOperationException(
+					$"Could not find a connection string for Tethr. Please add a connection string in the <ConnectionStrings> section of the application's configuration file. For example: <add name=\"Tethr\" connectionString=\"uri=https://YourCompanyNameHere.Audio.Tethr.io/;ApiUser=YourUserNameHere;Password=YourPasswordHere\" />");
+			}
+
+			// Initialize new options from the connection string
+			var sessionOptions = TethrSessionOptions.InitializeFromConnectionString(connectionStringSettings.ConnectionString);
+			
 			// Create a Tethr Session and store it for use when we make our API calls.
-			_tethrSession = new TethrSession(); // {DefaultProxy = new WebProxy("http://127.0.0.1:8888", false) };
+			_tethrSession = new TethrSession(sessionOptions); // {DefaultProxy = new WebProxy("http://127.0.0.1:8888", false) };
 
 			// Send the file, and then await the result.
 			var fileName = args.Length < 1 ? "SampleRecording.json" : args[0] ?? "";
