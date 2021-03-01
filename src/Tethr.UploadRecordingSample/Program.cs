@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Common.Logging;
+using Common.Logging.Simple;
 using Tethr.AudioBroker;
 using Tethr.AudioBroker.Model;
 using Tethr.AudioBroker.Session;
