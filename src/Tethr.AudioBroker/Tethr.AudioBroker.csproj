@@ -2,13 +2,29 @@
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
+        <Authors>CollabIP, inc.</Authors>
+        <Product>Tethr Audio Broker SDK</Product>
+        <Description>SDK for sending calls, chats, and cases to Tethr.</Description>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <RepositoryUrl>https://github.com/CollabIP/Tethr.AudioBroker.SDK</RepositoryUrl>
+        <PackageIcon>tethr-96.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Common.Logging" Version="3.4.1" />
-      <PackageReference Include="Common.Logging.Core" Version="3.4.1" />
-      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+      <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
       <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\..\LICENSE">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
+      <None Include="..\tethr-96.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
     </ItemGroup>
 
 </Project>
