@@ -24,7 +24,7 @@ namespace Tethr.AudioBroker.Session
 	public class TethrSession : ITethrSession, IDisposable
 	{
 		private static readonly ILog Log = LogManager.GetLogger(typeof(TethrSession));
-		private static ProductInfoHeaderValue _productInfoHeaderValue = null;
+		private static ProductInfoHeaderValue _productInfoHeaderValue;
 		private readonly object _authLock = new object();
 		private readonly string _apiUser;
 		private readonly SecureString _apiPassword;
@@ -47,18 +47,17 @@ namespace Tethr.AudioBroker.Session
 			_client = CreateHttpClient(hostUri);
 		}
 
-		public TethrSession(string connectionStringName = "Tethr")
+		public TethrSession(TethrSessionOptions options)
 		{
-			var connectionString = TethrConnectionStringBuilder.Read(connectionStringName);
-			var hostUri = new Uri(connectionString.Uri, UriKind.Absolute);
+			var hostUri = new Uri(options.Uri, UriKind.Absolute);
 
 			if (!hostUri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
 			{
 				Log.Warn("Not using HTTPS for connection to server.");
 			}
 
-			_apiUser = connectionString.ApiUser;
-			_apiPassword = ToSecureString(connectionString.Password);
+			_apiUser = options.ApiUser;
+			_apiPassword = ToSecureString(options.Password);
 			_client = CreateHttpClient(hostUri);
 		}
 
@@ -150,7 +149,7 @@ namespace Tethr.AudioBroker.Session
 						}
 					}
 
-					return default(TOut);
+					return default;
 				}
 			}
 		}
@@ -309,10 +308,17 @@ namespace Tethr.AudioBroker.Session
 			var proxy = DefaultProxy;
 			if (proxy != null)
 			{
+				try
+				{
+					message += $" through {proxy.GetProxy(hostUri)}";
+				}
+				catch (PlatformNotSupportedException)
+				{
+					Log.Warn($"Not able to get proxy from {proxy}.");
+				}
+				
 				httpHandler.Proxy = proxy;
 				httpHandler.UseProxy = true;
-				var connectThrough = proxy.GetProxy(hostUri);
-				message += $" through {connectThrough}";
 			}
 
 			Log.Info(message);
@@ -323,7 +329,7 @@ namespace Tethr.AudioBroker.Session
 				DefaultRequestHeaders = { UserAgent =
 				{
 					new ProductInfoHeaderValue("TethrAudioBroker", version.ToString()),
-					new ProductInfoHeaderValue($"({Environment.OSVersion.ToString()})"),
+					new ProductInfoHeaderValue($"({Environment.OSVersion})"),
 					new ProductInfoHeaderValue("DotNet-CLR", Environment.Version.ToString())
 				} }
 			}; 
