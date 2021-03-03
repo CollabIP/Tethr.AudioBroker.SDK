@@ -8,7 +8,7 @@ SDK for sending calls, chats, and cases to Tethr.
 The parameterless constructor for `TethrSession` has been removed.
 This was used to configure the session automatically by reading the Tethr connection string
 from the app config but the app config is no longer read directly by the SDK. The host
-application is now responsible configuring the `TethrSession`.
+application is now responsible for configuring the `TethrSession`.
 A new constructor is available that takes a `TethrSessionOptions` object and it has a static method
 available that creates a new instance using a connection string. Please see the `UploadRecordingSample`
 application for an example of how to configure the session from a connection string in the app config.
