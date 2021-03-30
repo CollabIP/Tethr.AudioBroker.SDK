@@ -47,5 +47,7 @@ namespace Tethr.AudioBroker.Model
         public string CallId { get; set; }
 
         public string SessionId { get; set; }
+        
+        public long DurationSec { get; set; }
     }
 }
