@@ -13,6 +13,6 @@ A new constructor is available that takes a `TethrSessionOptions` and the class 
 that creates a new instance using a connection string. Please see the `UploadRecordingSample`
 application for an example of how to configure the session from a connection string in the app config.
 
-The `Error` value has been removed from the `CallStatus` enum. Any code relying on this status for handling errors
-should be refactored to use a `try/catch` block to catch `HttpRequestException` for non success status codes.
+The `Error` value has been removed from the `CallStatus` enum. Any code making requests to Tethr via 
+`TethrSession` should use a `try/catch` block to catch `HttpRequestException` for non success status codes.
 
