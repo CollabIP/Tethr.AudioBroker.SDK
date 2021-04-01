@@ -25,11 +25,6 @@ namespace Tethr.AudioBroker.Model
         NotFound,
 
         /// <summary>
-        /// The call has error.
-        /// </summary>
-        Error,
-        
-        /// <summary>
         /// The call was excluded during processing.
         /// </summary>
         Excluded
