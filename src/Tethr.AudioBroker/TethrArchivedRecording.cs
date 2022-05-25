@@ -44,7 +44,7 @@ namespace Tethr.AudioBroker
                 // Set the media type to the one used by default in Tethr.
                 mediaType = "audio/wav";
             }
-            else if (string.Equals("audio/mp3", mediaType, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals("audio/mp3", mediaType, StringComparison.OrdinalIgnoreCase) || string.Equals("audio/mpeg", mediaType, StringComparison.OrdinalIgnoreCase))
             {
                 info.Audio = new Audio { Format = "mp3" };
             }
