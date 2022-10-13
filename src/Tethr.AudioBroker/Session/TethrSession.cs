@@ -9,7 +9,8 @@ using System.Security;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
-using Common.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 
 namespace Tethr.AudioBroker.Session
@@ -23,7 +24,7 @@ namespace Tethr.AudioBroker.Session
 	/// </remarks>
 	public class TethrSession : ITethrSession, IDisposable
 	{
-		private static readonly ILog Log = LogManager.GetLogger(typeof(TethrSession));
+		private readonly ILogger<TethrSession> _log = new NullLogger<TethrSession>();
 		private static ProductInfoHeaderValue _productInfoHeaderValue;
 		private readonly object _authLock = new object();
 		private readonly string _apiUser;
@@ -31,15 +32,17 @@ namespace Tethr.AudioBroker.Session
 		private readonly HttpClient _client;
 		private TokenResponse _apiToken;
 
-		public TethrSession(Uri hostUri, string apiUser, string apiPassword) :
-			this(hostUri, apiUser, ToSecureString(apiPassword))
+		public TethrSession(Uri hostUri, string apiUser, string apiPassword, ILogger<TethrSession> logger = null) :
+			this(hostUri, apiUser, ToSecureString(apiPassword), logger)
 		{ }
 
-		public TethrSession(Uri hostUri, string apiUser, SecureString apiPassword)
+		public TethrSession(Uri hostUri, string apiUser, SecureString apiPassword, ILogger<TethrSession> logger = null)
 		{
+			if (logger != null) _log = logger;
+			
 			if (!hostUri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
 			{
-				Log.Warn("Not using HTTPS for connection to server.");
+				_log.LogWarning("Not using HTTPS for connection to server");
 			}
 
 			_apiUser = apiUser;
@@ -47,13 +50,15 @@ namespace Tethr.AudioBroker.Session
 			_client = CreateHttpClient(hostUri);
 		}
 
-		public TethrSession(TethrSessionOptions options)
+		public TethrSession(TethrSessionOptions options, ILogger<TethrSession> logger = null)
 		{
+			if (logger != null) _log = logger;
+			
 			var hostUri = new Uri(options.Uri, UriKind.Absolute);
 
 			if (!hostUri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
 			{
-				Log.Warn("Not using HTTPS for connection to server.");
+				_log.LogWarning("Not using HTTPS for connection to server");
 			}
 
 			_apiUser = options.ApiUser;
@@ -202,8 +207,7 @@ namespace Tethr.AudioBroker.Session
 			if (string.IsNullOrEmpty(uri))
 				return null;
 			var u = new Uri(uri, UriKind.Relative);
-			if (Log.IsDebugEnabled)
-				Log.Debug($"Making a request to {u}");
+			_log.LogDebug("Making a request to {U}", u);
 			return u;
 		}
 
@@ -243,7 +247,7 @@ namespace Tethr.AudioBroker.Session
 
 		private async Task<TokenResponse> GetClientCredentialsAsync(string clientId, SecureString clientSecret)
 		{
-			Log.Info($"Requesting new token from {_client.BaseAddress}");
+			_log.LogInformation("Requesting new token from {ClientBaseAddress}", _client.BaseAddress);
 
 			using (HttpContent r = new FormUrlEncodedContent(
 				new Dictionary<string, string>
@@ -260,8 +264,8 @@ namespace Tethr.AudioBroker.Session
 				response.EnsureSuccessStatusCode();
 				var t = JsonConvert.DeserializeObject<TokenResponse>(await response.Content.ReadAsStringAsync());
 
-				Log.Debug($"Token received, type: {t.TokenType}, expires in {t.ExpiresInSeconds} seconds");
-				if (t.TokenType != "bearer")
+				_log.LogDebug("Token received, type: {TTokenType}, expires in {TExpiresInSeconds} seconds", t?.TokenType, t?.ExpiresInSeconds);
+				if (t?.TokenType != "bearer")
 				{
 					throw new InvalidOperationException("Can only support Bearer tokens");
 				}
@@ -291,7 +295,7 @@ namespace Tethr.AudioBroker.Session
 		private static SecureString ToSecureString(string text)
 		{
 			var secure = new SecureString();
-			foreach (char c in text)
+			foreach (var c in text)
 			{
 				secure.AppendChar(c);
 			}
@@ -299,7 +303,7 @@ namespace Tethr.AudioBroker.Session
 			return secure;
 		}
 
-		private static HttpClient CreateHttpClient(Uri hostUri)
+		private HttpClient CreateHttpClient(Uri hostUri)
 		{
 			var version = typeof(TethrSession).Assembly.GetName().Version;
 			var message = $"Requests for Tethr to {hostUri} using SDK version {version}";
@@ -314,14 +318,14 @@ namespace Tethr.AudioBroker.Session
 				}
 				catch (PlatformNotSupportedException)
 				{
-					Log.Warn($"Not able to get proxy from {proxy}.");
+					_log.LogWarning("Not able to get proxy from {Proxy}", proxy);
 				}
 				
 				httpHandler.Proxy = proxy;
 				httpHandler.UseProxy = true;
 			}
 
-			Log.Info(message);
+			_log.LogInformation(message);
 			var client = new HttpClient(httpHandler, true)
 			{
 				BaseAddress = hostUri,

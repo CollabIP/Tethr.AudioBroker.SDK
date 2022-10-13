@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Tethr.AudioBroker;
 using Tethr.AudioBroker.Model;
 
@@ -20,14 +21,16 @@ namespace Tethr.UploadRecordingSample
 		private readonly ITethrHeartbeat _heartbeat;
 
 		private readonly Timer _internalTimer;
-		private readonly ILog _log = LogManager.GetLogger(typeof(TethrHeartbeatTimerSample));
+		private readonly ILogger _log = new NullLogger<TethrHeartbeatTimerSample>();
 		private readonly object _syncRoot = new object();
 		private bool _disposed;
 
 		private Func<MonitorStatus> _getStatusCallback;
 
-		public TethrHeartbeatTimerSample(ITethrHeartbeat heartbeat)
+		public TethrHeartbeatTimerSample(ITethrHeartbeat heartbeat, ILogger logger)
 		{
+			if (logger != null) _log = logger;
+			
 			_heartbeat = heartbeat;
 			// Using due time and not period in timer so that if our call to Tethr
 			// takes longer then then the period, we don't try to send two at a time.
@@ -77,14 +80,12 @@ namespace Tethr.UploadRecordingSample
 					if (Online)
 					{
 						// State is transitioning, we will log as an error
-						_log.Error("Error sending heart beat to Tethr.  " + e.Message, e);
+						_log.LogError($"Error sending heart beat to Tethr.  {e.Message}", e);
 						Online = false;
 					}
-					else if (_log.IsTraceEnabled)
-					{
-						// We don't want to flood the logs with errors, so we will just send it as a trace.
-						_log.Trace("Error sending heart beat to Tethr.  " + e.Message, e);
-					}
+					
+					// We don't want to flood the logs with errors, so we will just send it as a trace.
+					_log.LogTrace($"Error sending heart beat to Tethr.  { e.Message}", e);
 				}
 				finally
 				{
