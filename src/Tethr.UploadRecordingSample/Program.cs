@@ -3,8 +3,7 @@ using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using Common.Logging;
-using Common.Logging.Simple;
+using Microsoft.Extensions.Logging;
 using Tethr.AudioBroker;
 using Tethr.AudioBroker.Model;
 using Tethr.AudioBroker.Session;
@@ -31,8 +30,12 @@ namespace Tethr.UploadRecordingSample
 		{
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 			
-			// Setup Common Logger with default settings
-			LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter();
+			// Setup console Logger with default settings
+			var factory = LoggerFactory.Create(builder =>
+			{
+				builder.AddConsole();
+			});
+			var logger = factory.CreateLogger<TethrSession>();
 
 			// Set the product info header, used to update the HTTP User-Agent for requests to Tethr.
 			var programType = typeof(Program);
@@ -50,7 +53,7 @@ namespace Tethr.UploadRecordingSample
 			var sessionOptions = TethrSessionOptions.InitializeFromConnectionString(connectionStringSettings.ConnectionString);
 			
 			// Create a Tethr Session and store it for use when we make our API calls.
-			_tethrSession = new TethrSession(sessionOptions); // {DefaultProxy = new WebProxy("http://127.0.0.1:8888", false) };
+			_tethrSession = new TethrSession(sessionOptions, logger); // {DefaultProxy = new WebProxy("http://127.0.0.1:8888", false) };
 
 			// Send the file, and then await the result.
 			var fileName = args.Length < 1 ? "SampleRecording.json" : args[0] ?? "";
