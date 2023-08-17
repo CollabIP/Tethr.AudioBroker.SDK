@@ -38,7 +38,7 @@ namespace Tethr.AudioBroker
             var audioFormat = mediaType.MimeTypeToAudioExtension();
             if (string.IsNullOrEmpty(audioFormat))
             {
-                throw new ArgumentException($"Invalid file type {audioFormat}, valid types are {MimeAudioExtensions.SupportedAudioExtensions()}");
+                throw new ArgumentException($"Invalid media type {mediaType}, valid types are {MimeAudioExtensions.SupportedMimeTypes()}");
             }
             
             info.Audio = new Audio { Format = audioFormat };
