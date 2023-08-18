@@ -22,6 +22,21 @@ namespace Tethr.AudioBroker
 
     public class TethrArchivedRecording : ITethrArchivedRecording
     {
+
+        private static readonly Dictionary<string, string> MimeTypeMappings = new Dictionary<string, string>()
+        {
+            { "audio/wav", "wav" }, { "audio/x-wav", "wav" }, { "audio/wave", "wav" }, { "audio/vnd.wav", "wav" },
+            { "audio/x-wave", "wav" }, { "audio/mp3", "mp3" }, { "audio/ogg", "opus" }, { "audio/mp4", "mp4" },
+            { "audio/m4a", "mp4" }, { "audio/mp4-helium", "mp4helium" }, { "audio/m4a-helium", "mp4helium" },
+            { "audio/wma", "wma" }, { "audio/wma-helium", "wmahelium" }
+        };
+        
+        private static string MediaTypeToTethrType(string mimeType)
+        {
+            if(string.IsNullOrEmpty(mimeType)) throw new ArgumentNullException(nameof(mimeType));
+            return MimeTypeMappings.TryGetValue(mimeType.ToLower(), out var returnType) ? returnType : mimeType;
+        }
+
         private readonly ITethrSession _tethrSession;
 
         public TethrArchivedRecording(ITethrSession tethrSession)
@@ -31,18 +46,12 @@ namespace Tethr.AudioBroker
 
         public async Task<ArchiveCallResponse> SendRecordingAsync(RecordingInfo info, Stream waveStream, string mediaType)
         {
-            // Setting the Audio Format to make sure it matches the media type
-            // Note that ArchiveController still validates this, when it could actually set it 
-            // the way we do here, and rely on Tethr to validate.
-            // RecordingInfo.Audio will be obsoleted at some point in favor of only looking at the media type.
-            var audioFormat = mediaType.MimeTypeToAudioExtension();
-            if (string.IsNullOrEmpty(audioFormat))
-            {
-                throw new ArgumentException($"Invalid media type {mediaType}, valid types are {MimeAudioExtensions.SupportedMimeTypes()}");
-            }
-            
+            // check the media types, and convert them to the types that Tethr is expecting.
+            // Allow the user to put in other types, that maybe the API supports now but the SDK doesn't
+            // yet have the mapping from media type.
+            var audioFormat = MediaTypeToTethrType(mediaType);
             info.Audio = new Audio { Format = audioFormat };
-            
+
             var result = await
                 _tethrSession.PostMultiPartAsync<ArchiveCallResponse>("/callCapture/v1/archive", info, waveStream, mediaType);
 
@@ -66,7 +75,7 @@ namespace Tethr.AudioBroker
         {
             await SetExcludedStatusAsync(new[] { sessionId });
         }
-        
+
         public async Task SetExcludedStatusAsync(IEnumerable<string> sessionIds)
         {
             await _tethrSession.PostAsync("/callCapture/v1/status/exclude", new { CallSessionIds = sessionIds });
