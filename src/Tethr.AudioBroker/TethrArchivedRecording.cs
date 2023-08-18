@@ -22,6 +22,21 @@ namespace Tethr.AudioBroker
 
     public class TethrArchivedRecording : ITethrArchivedRecording
     {
+
+        private static readonly Dictionary<string, string> MimeTypeMappings = new Dictionary<string, string>()
+        {
+            { "audio/wav", "wav" }, { "audio/x-wav", "wav" }, { "audio/wave", "wav" }, { "audio/vnd.wav", "wav" },
+            { "audio/x-wave", "wav" }, { "audio/mp3", "mp3" }, { "audio/ogg", "opus" }, { "audio/mp4", "mp4" },
+            { "audio/m4a", "mp4" }, { "audio/mp4-helium", "mp4helium" }, { "audio/m4a-helium", "mp4helium" },
+            { "audio/wma", "wma" }, { "audio/wma-helium", "wmahelium" }
+        };
+        
+        private static string MediaTypeToTethrType(string mimeType)
+        {
+            if(string.IsNullOrEmpty(mimeType)) throw new ArgumentNullException(nameof(mimeType));
+            return MimeTypeMappings.TryGetValue(mimeType.ToLower(), out var returnType) ? returnType : mimeType;
+        }
+
         private readonly ITethrSession _tethrSession;
 
         public TethrArchivedRecording(ITethrSession tethrSession)
@@ -31,32 +46,11 @@ namespace Tethr.AudioBroker
 
         public async Task<ArchiveCallResponse> SendRecordingAsync(RecordingInfo info, Stream waveStream, string mediaType)
         {
-            // Setting the Audio Format to make sure it matches the media type, RecordingInfo.Audio will be obsoleted at some point in favor of only looking at the media type.
-            if (string.Equals("audio/x-wav", mediaType, StringComparison.OrdinalIgnoreCase)
-                || string.Equals("audio/wave", mediaType, StringComparison.OrdinalIgnoreCase)
-                || string.Equals("audio/vnd.wav", mediaType, StringComparison.OrdinalIgnoreCase)
-                || string.Equals("audio/x-wave", mediaType, StringComparison.OrdinalIgnoreCase)
-                || string.Equals("audio/wav", mediaType, StringComparison.OrdinalIgnoreCase))
-            {
-                // Setting the audio value as some instance of Tethr may still be looking for this.
-                // Will be removed from SDK, once it is fully removed from Tethr servers.
-                info.Audio = new Audio { Format = "wav" };
-                // Set the media type to the one used by default in Tethr.
-                mediaType = "audio/wav";
-            }
-            else if (string.Equals("audio/mp3", mediaType, StringComparison.OrdinalIgnoreCase) || string.Equals("audio/mpeg", mediaType, StringComparison.OrdinalIgnoreCase))
-            {
-                info.Audio = new Audio { Format = "mp3" };
-            }
-			else if (string.Equals("audio/ogg", mediaType, StringComparison.OrdinalIgnoreCase))
-			{
-				info.Audio = new Audio { Format = "opus" };
-			}
-			else
-			{
-                //Check the file type is wav, If they are not attaching a file, we only support Wav files.
-                throw new ArgumentException("Only Wav, MP3, or OPUS files are supported files.");
-            }
+            // check the media types, and convert them to the types that Tethr is expecting.
+            // Allow the user to put in other types, that maybe the API supports now but the SDK doesn't
+            // yet have the mapping from media type.
+            var audioFormat = MediaTypeToTethrType(mediaType);
+            info.Audio = new Audio { Format = audioFormat };
 
             var result = await
                 _tethrSession.PostMultiPartAsync<ArchiveCallResponse>("/callCapture/v1/archive", info, waveStream, mediaType);
@@ -81,7 +75,7 @@ namespace Tethr.AudioBroker
         {
             await SetExcludedStatusAsync(new[] { sessionId });
         }
-        
+
         public async Task SetExcludedStatusAsync(IEnumerable<string> sessionIds)
         {
             await _tethrSession.PostAsync("/callCapture/v1/status/exclude", new { CallSessionIds = sessionIds });
