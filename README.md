@@ -1,4 +1,9 @@
 ![logo](https://github.com/CollabIP/Tethr.AudioBroker.SDK/blob/master/src/tethr-96.png?raw=true)
+
+# ⚠️⚠️ Deprecated
+
+This project is no longer supported, please use the updated SDK at https://github.com/CollabIP/Tethr.sdk-dotnet
+
 # Tethr.AudioBroker.SDK
 SDK for sending calls, chats, and cases to Tethr.
 
